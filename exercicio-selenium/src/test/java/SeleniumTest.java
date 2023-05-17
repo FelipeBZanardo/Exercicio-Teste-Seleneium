@@ -18,14 +18,14 @@ public class SeleniumTest {
     void setUp() {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--remote-allow-origins=*", "--headless");
+        chromeOptions.addArguments("--remote-allow-origins=*");
         webDriver = new ChromeDriver(chromeOptions);
         webDriver.get("https://chercher.tech/practice/dynamic-table");
     }
 
     @AfterEach
     void tearDown() {
-        webDriver.quit();
+        //webDriver.quit();
     }
 
     @Test
@@ -38,10 +38,25 @@ public class SeleniumTest {
 
     @Test
     void exercicioXPathSelectFacebookTest() {
-        WebElement checkboxFacebook = webDriver
-                .findElement(By.xpath("/html/body/div[1]/div/div/div/div[1]/table/tbody/tr[2]/td[1]/input"));
-        checkboxFacebook.click();
-        assertTrue(checkboxFacebook.isSelected());
+        List<WebElement> checkboxes = webDriver
+                .findElements(By.xpath("/html/body/div[1]/div/div/div/div[1]/table/tbody/tr[*]/td[1]/input"));
+        List<WebElement> campos = webDriver
+                .findElements(By.xpath("/html/body/div[1]/div/div/div/div[1]/table/tbody/tr[*]/td[2]"));
+        /*int posicao = 0;
+        WebElement checkbox = null;
+        for (int i = 0; i < campos.size(); i++) {
+            if (campos.get(i).getText().equals("facebook.com")) {
+                checkboxes.get(i).click();
+                checkbox = checkboxes.get(i);
+                posicao = i;
+            }
+        }
+        assertTrue(checkbox.isSelected());*/
+        WebElement webElement = campos.stream().filter(campo -> campo.getText().equals("facebook.com"))
+                .findFirst().get();
+        int posicao = campos.indexOf(webElement);
+        checkboxes.get(posicao).click();
+        assertTrue(checkboxes.get(posicao).isSelected());
     }
 
     @Test
@@ -51,4 +66,6 @@ public class SeleniumTest {
         allSelects.forEach(WebElement::click);
         allSelects.forEach(select -> assertTrue(select.isSelected()));
     }
+
+
 }
